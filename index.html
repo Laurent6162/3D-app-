@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaSoda - 3D Web App</title>
+
+    <!-- Bootstrap 5 (local) -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fonts are bundled locally through assets/css/style.css -->
+    <!-- My styles -->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Three.js r160 import map - all files local so the site works offline -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "./assets/vendor/three/three.module.js",
+        "three/addons/": "./assets/vendor/three/addons/"
+      }
+    }
+    </script>
+</head>
+<body>
+
+<!-- ===== Header / Nav ===== -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top nova-nav">
+    <div class="container-fluid">
+        <!-- CSS logo -->
+        <a class="navbar-brand d-flex align-items-center" href="#" data-page="home">
+            <span class="logo-mark"></span>
+            <span class="logo-text">Nova<span class="logo-accent">Soda</span></span>
+        </a>
+        <span class="strapline d-none d-md-inline">— taste the orbit —</span>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#" data-page="home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="app">3D App</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="originality">Originality</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="sitemap">Site Map</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" data-page="refs">References</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="main-content">
+
+    <!-- ===== Home ===== -->
+    <section id="page-home" class="page active">
+        <div class="hero">
+            <div class="hero-bg"></div>
+            <div class="container text-center hero-inner">
+                <h1 class="display-2 fw-bold text-white">NovaSoda</h1>
+                <p class="lead text-white-50">A small web application with two cans and a glass bottle you can drag around in the browser.</p>
+                <button class="btn btn-lg btn-nova mt-3" data-page="app">Launch 3D App →</button>
+            </div>
+        </div>
+
+        <div class="container my-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card-feature">
+                        <h3>Three Products</h3>
+                        <p>There are two cans (Citrus and Berry) and one glass bottle (Nova Cola). I built all three models using Three.js by revolving a 2-dimensional outline around its vertical axis, creating something called a lathe mesh.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-feature">
+                        <h3>Interactive</h3>
+                        <p>You have the ability to drag to rotate, scroll to zoom, change the product from the list on the left, switch the lights on and off, select between three different label designs, and click on the model to make it spin.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-feature">
+                        <h3>Web tech</h3>
+                        <p>I used HTML5, CSS3, Bootstrap 5 and jQuery for the front end. The 3D side of the project was built using Three.js r160, my own GLSL shader for creating the cola bottle glass, and a bloom pass to make the image look better. I wrote a small form that writes feedback to a SQLite database on the About page using a small PHP script.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== 3D App ===== -->
+    <section id="page-app" class="page">
+        <div class="container-fluid app-wrap">
+            <div class="row g-0">
+
+                <!-- Left: product gallery -->
+                <div class="col-lg-2 col-md-3 gallery-col">
+                    <h5 class="panel-title">Products</h5>
+                    <div id="product-gallery" class="product-gallery"></div>
+
+                    <h5 class="panel-title mt-4">Label Edition</h5>
+                    <div class="btn-group-vertical w-100" role="group">
+                        <button class="btn btn-sm btn-outline-light edition-btn active" data-edition="standard">Standard</button>
+                        <button class="btn btn-sm btn-outline-light edition-btn" data-edition="night">Night Edition</button>
+                        <button class="btn btn-sm btn-outline-light edition-btn" data-edition="retro">Retro 80s</button>
+                    </div>
+                </div>
+
+                <!-- Center: 3D viewer -->
+                <div class="col-lg-7 col-md-9 viewer-col">
+                    <div id="viewer" class="viewer"></div>
+                    <div class="viewer-hint">Drag to rotate · Scroll to zoom · Click model to spin</div>
+                </div>
+
+                <!-- Right: controls + info -->
+                <div class="col-lg-3 controls-col">
+                    <h5 class="panel-title">Controls</h5>
+
+                    <div class="control-group">
+                        <label class="form-label">Rendering</label>
+                        <div class="btn-group w-100" role="group">
+                            <button id="btn-wireframe" class="btn btn-sm btn-outline-light">Wireframe</button>
+                            <button id="btn-shader" class="btn btn-sm btn-outline-light">Glass Shader</button>
+                            <button id="btn-bloom" class="btn btn-sm btn-outline-light">Bloom</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="form-label">Lighting</label>
+                        <div class="light-controls">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="light-key" checked>
+                                <label class="form-check-label" for="light-key">Key light</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="light-fill" checked>
+                                <label class="form-check-label" for="light-fill">Fill light</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="light-rim" checked>
+                                <label class="form-check-label" for="light-rim">Rim light</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="light-spot">
+                                <label class="form-check-label" for="light-spot">Spot light</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="form-label">Camera</label>
+                        <div class="btn-group w-100" role="group">
+                            <button class="btn btn-sm btn-outline-light cam-btn" data-cam="default">3/4</button>
+                            <button class="btn btn-sm btn-outline-light cam-btn" data-cam="front">Front</button>
+                            <button class="btn btn-sm btn-outline-light cam-btn" data-cam="top">Top</button>
+                            <button class="btn btn-sm btn-outline-light cam-btn" data-cam="low">Low</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="form-label">Animation</label>
+                        <div class="btn-group w-100" role="group">
+                            <button id="btn-autorotate" class="btn btn-sm btn-outline-light">Auto-rotate</button>
+                            <button id="btn-spin" class="btn btn-sm btn-outline-light">Spin once</button>
+                        </div>
+                    </div>
+
+                    <hr class="text-white-50">
+
+                    <!-- Product info (AJAX loaded) -->
+                    <div id="product-info" class="product-info">
+                        <h4 id="info-name">—</h4>
+                        <p id="info-tagline" class="info-tagline">—</p>
+                        <dl class="info-stats">
+                            <dt>Flavour</dt><dd id="info-flavour">—</dd>
+                            <dt>Volume</dt><dd id="info-volume">—</dd>
+                            <dt>Year</dt><dd id="info-year">—</dd>
+                        </dl>
+                        <p id="info-story" class="info-story">—</p>
+                    </div>
+
+                    <!-- Media tabs: image / video / audio -->
+                    <div class="media-tabs">
+                        <ul class="nav nav-pills nav-fill" id="mediaTab" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#mtab-img">Image</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mtab-vid">Video</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mtab-aud">Audio</button></li>
+                        </ul>
+                        <div class="tab-content mt-2">
+                            <div class="tab-pane fade show active" id="mtab-img">
+                                <div id="media-image" class="media-image"></div>
+                                <p class="small text-white-50 mt-1">Product promo image (updates with the selected product).</p>
+                            </div>
+                            <div class="tab-pane fade" id="mtab-vid">
+                                <video id="media-video" class="w-100" controls muted poster="assets/images/promo-still.jpg">
+                                    <source src="assets/video/promo.mp4" type="video/mp4">
+                                    Your browser does not support video.
+                                </video>
+                                <p class="small text-white-50 mt-1">Six-second brand promo, generated with ffmpeg.</p>
+                            </div>
+                            <div class="tab-pane fade" id="mtab-aud">
+                                <audio id="media-audio" class="w-100" controls>
+                                    <source src="assets/audio/fizz.mp3" type="audio/mpeg">
+                                </audio>
+                                <p class="small text-white-50 mt-1">Synthetic can-opening + fizz (3 seconds).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section id="page-about" class="page">
+        <div class="container my-5">
+            <h1>About this 3D App</h1>
+            <p class="lead">NovaSoda is a fictitious brand of soft drink. I created it to use as the basis of my H7006 Web 3D Applications coursework, because the brief specified that we could not reuse any Coca-Cola branding from the labs. The website is a simple way for me to demonstrate that I can put 3D models into a standard web page, using the tools and techniques we have learned in the course.</p>
+
+            <h3 class="mt-4">How I built the 3D models</h3>
+            <p>I did not import pre-existing 3D files for any of the products. I entered a 2D outline for each product into the code as a list of points, and then asked Three.js to spin that outline around a vertical axis (with <code>LatheGeometry</code>) to create the three-dimensional product. The two cans contain approximately 600 triangles each, while the bottle contains about 1,800 triangles; and I believe this number is low enough to keep the page running smoothly on my laptop's integrated GPU.</p>
+            <p>None of the labels used image files. When the 3D app page loads, the product's brand name and flavour name are drawn to a Canvas object in JavaScript, and then the Canvas is passed to Three.js as a <code>CanvasTexture</code>. The texture is then used as a cover for a thin cylinder that is positioned just inside the side of each can. By clicking on either the Standard, Night or Retro 80s label, the brand and flavour name will be redrawn to the same Canvas with a different palette, and the texture will change dynamically, so that three separate PNGs were not required.</p>
+            <p>The Nova Cola bottle is the most complicated product in the project. It has a secondary, smaller mesh inside it that represents the beverage (liquid) inside the bottle, while the glass of the bottle is created using a ShaderMaterial with my own vertex and fragment shader. The colour values used for drawing the bottle's glass use a Fresnel factor, which makes the colour more intense at extreme viewing angles, and a time-based shimmer (at a slow rate) on the rim, so the outline of the bottle reads as solid amber glass, while the liquid mesh is clearly visible in the middle.</p>
+
+            <h3 class="mt-4">Design choices</h3>
+            <p>Because the bloom and amber shader will be lost on a white background, I used a dark background for the 3D application. I initially tried a white background, but the bottle appeared flat.</p>
+            <p>The 3D app is laid out in a grid style (Bootstrap's 12 column grid). The gallery takes up 2 columns, the viewer takes up 7, and the controls take up 3. On a phone, each of the three columns will stack vertically.</p>
+            <p>The scene is set up using a three-light system (key, fill, rim). Each of the three lights is controlled via a toggle switch on the user interface. I found it easier to diagnose what each light was doing during the development phase, and I kept the switches available in case that may help a visitor understand how the lighting is working.</p>
+            <p>Navigation does not load new HTML files, but instead uses jQuery to hide/show sections on the page. This is closer to what a single-page application (SPA) does, and it is how the content swapping mentioned in the project brief is implemented here.</p>
+
+            <h3 class="mt-4">Accessibility</h3>
+            <p>The same items that can be clicked on the 3D app page also have keyboard shortcuts. You can press the <kbd>1</kbd>, <kbd>2</kbd>, or <kbd>3</kbd> key to switch products; <kbd>W</kbd> will toggle between wireframe view or regular view; <kbd>R</kbd> will allow for the model to automatically rotate; and <kbd>S</kbd> will make the model spin once.</p>
+            <p>I did not remove the default browser focus outline, so those that use a keyboard to navigate can see where they are focused. None of the buttons are icon-only; every button has a short text label associated with it.</p>
+            <p>The promo video starts muted and the audio clip uses the standard HTML5 controls, so both can be paused, seeked or have their volume changed from the keyboard.</p>
+            <p>I tested the button and text colours on the dark control panel (that contains the control buttons) against the Web Content Accessibility Guidelines (WCAG) colour contrast AA standard for normal text using Chrome Developer Tools. The control button labels were the most critical, but all of them passed.</p>
+
+            <h3 class="mt-4">Architecture (MVC)</h3>
+            <p>I attempted to keep the JavaScript separation to the MVC pattern primarily for my own sanity while developing, but it also serves to aid with communication relating to the system.</p>
+            <p><strong>Model</strong> — <code>data/products.json</code> (plus a few state variables at the top of <code>app.js</code>). The <code>products.json</code> file contains the metadata for the products, and the variables keep track of which product is currently being displayed.</p>
+            <p><strong>View</strong> — two parts. <code>scene.js</code> controls everything shown in 3D (the Three.js renderer, camera, lights, and meshes). <code>app.js</code> deals with any updates in the DOM (text in the info panel, highlighted gallery, media tabs, etc).</p>
+            <p><strong>Controller</strong> — the controller is simply the <code>app.js</code> event handler. It provides a central location for handling mouse clicks, key presses, and submits of forms, and calls the necessary methods in the store or Viewer for any actions to be taken.</p>
+            <p>On the server side, I use <code>api/feedback.php</code>, which reads and writes a SQLite database file and acts as a simple guestbook on the About page only. It is not a full backend.</p>
+
+            <h3 class="mt-4">Leave feedback</h3>
+            <form id="feedback-form" class="row g-2">
+                <div class="col-md-3"><input type="text" class="form-control" name="name" placeholder="Your name" required></div>
+                <div class="col-md-6"><input type="text" class="form-control" name="message" placeholder="What did you think?" required></div>
+                <div class="col-md-3"><button class="btn btn-nova w-100" type="submit">Send</button></div>
+            </form>
+            <div id="feedback-list" class="feedback-list mt-3"></div>
+        </div>
+    </section>
+
+    <!-- ===== Originality ===== -->
+    <section id="page-originality" class="page">
+        <div class="container my-5">
+            <h1>Statement of Originality</h1>
+            <p>I did not download any of the geometry for any items produced in this project. Each vertex was produced using Three.js <code>LatheGeometry</code> and <code>BufferGeometry</code> within JavaScript, and there are no <code>.glb</code>, <code>.fbx</code>, or <code>.obj</code> files in the repository.</p>
+            <p>Also, all labels are produced in the browser instead of using an image. Labels are painted, during runtime, on to an HTML canvas and passed to Three.js as a <code>CanvasTexture</code>.</p>
+            <p>The brand "NovaSoda", the logo, the strapline "taste the orbit," and all of the stories for the products are all fictitious and were created by me purely for the purpose of this coursework. The name and logo are not based on any real company, and I am not using any real company's trademarks.</p>
+            <p>I utilized a very limited number of well-known third-party libraries, which are included via public CDNs, and I have included credits for each of them on the References page:</p>
+            <ul>
+                <li>Three.js r160 — rendering</li>
+                <li>Bootstrap 5.3 — layout &amp; components</li>
+                <li>jQuery 3.7 — DOM helpers and AJAX</li>
+                <li>Google Fonts (Bebas Neue) — bundled locally for display typography</li>
+            </ul>
+            <p>When I used a code snippet with modifications, I included inline comments in the source files to indicate where I originated it and what modifications I made.</p>
+        </div>
+    </section>
+
+    <!-- ===== Site Map ===== -->
+    <section id="page-sitemap" class="page">
+        <div class="container my-5">
+            <h1>Site Map</h1>
+            <ul class="sitemap">
+                <li><a href="#" data-page="home">Home</a> — Landing page with overview.</li>
+                <li><a href="#" data-page="app">3D App</a>
+                    <ul>
+                        <li>Product gallery (Citrus / Berry / Cola)</li>
+                        <li>3D viewer with OrbitControls</li>
+                        <li>Controls panel (rendering, lighting, camera, animation)</li>
+                        <li>Product info (loaded via AJAX from products.json)</li>
+                        <li>Media tabs (image / video / audio)</li>
+                    </ul>
+                </li>
+                <li><a href="#" data-page="about">About</a> — Design, architecture, accessibility, feedback form.</li>
+                <li><a href="#" data-page="originality">Statement of Originality</a></li>
+                <li><a href="#" data-page="sitemap">Site Map (this page)</a></li>
+                <li><a href="#" data-page="refs">References</a></li>
+                <li><a href="submission.html">Submission evidence</a> — required URLs and deeper-understanding statement.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== References ===== -->
+    <section id="page-refs" class="page">
+        <div class="container my-5">
+            <h1>References</h1>
+            <ol class="refs">
+                <li>Three.js documentation — <a href="https://threejs.org/docs/" target="_blank" rel="noopener">threejs.org/docs</a></li>
+                <li>Three.js examples (LatheGeometry, OrbitControls, UnrealBloomPass) — <a href="https://threejs.org/examples/" target="_blank" rel="noopener">threejs.org/examples</a></li>
+                <li>Bootstrap 5 docs — <a href="https://getbootstrap.com/docs/5.3/" target="_blank" rel="noopener">getbootstrap.com</a></li>
+                <li>jQuery API — <a href="https://api.jquery.com/" target="_blank" rel="noopener">api.jquery.com</a></li>
+                <li>The Book of Shaders (Fresnel / noise) — <a href="https://thebookofshaders.com/" target="_blank" rel="noopener">thebookofshaders.com</a></li>
+                <li>Module labs 1–10, H7006 Web 3D Applications, University of Sussex, 2026.</li>
+                <li>MDN Web Docs — <a href="https://developer.mozilla.org/" target="_blank" rel="noopener">developer.mozilla.org</a></li>
+                <li>PHP PDO SQLite — <a href="https://www.php.net/manual/en/ref.pdo-sqlite.php" target="_blank" rel="noopener">php.net</a></li>
+            </ol>
+        </div>
+    </section>
+
+</main>
+
+<footer class="text-center text-white-50 py-3 small">
+    NovaSoda 3D App · H7006 Web 3D Applications · 2026 ·
+    <a href="submission.html" class="text-white-50">Submission evidence</a>
+</footer>
+
+<!-- jQuery + Bootstrap JS (local) -->
+<script src="assets/vendor/jquery/jquery-3.7.1.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- My app (module) -->
+<script type="module" src="assets/js/app.js"></script>
+
+</body>
+</html>
