@@ -1,0 +1,52 @@
+{
+  "products": [
+    {
+      "id": "citrus",
+      "name": "Citrus",
+      "fullName": "NovaSoda Citrus",
+      "tagline": "Sunrise in a can.",
+      "flavour": "Lemon & Yuzu",
+      "volume": "330 ml",
+      "year": 2024,
+      "story": "The lightest taste in the range. I used yuzu peel and a small amount of cane sugar for the flavour, which is why the colour scheme for this can is primarily yellow with orange striping. It is meant to be a tart flavour instead of a sugary flavour.",
+      "shape": "can",
+      "colors": {
+        "primary": "#ffd24d",
+        "secondary": "#ff8a1f",
+        "accent": "#ffffff"
+      }
+    },
+    {
+      "id": "berry",
+      "name": "Berry",
+      "fullName": "NovaSoda Berry",
+      "tagline": "Midnight in a can.",
+      "flavour": "Blackberry & Elderflower",
+      "volume": "330 ml",
+      "year": 2024,
+      "story": "Blackberry and elderflower. The directions for this can were simply that the can was to be coloured purple because I wanted a cool colour and thought it would contrast nicely with Citrus. Elderflower was added in the story to ensure it didn't sound too fruity. This will be the best-selling flavour in the simulated NovaSoda world.",
+      "shape": "can",
+      "colors": {
+        "primary": "#9b6bff",
+        "secondary": "#3d1e6b",
+        "accent": "#ffffff"
+      }
+    },
+    {
+      "id": "cola",
+      "name": "Nova Cola",
+      "fullName": "NovaSoda Nova Cola",
+      "tagline": "The classic, reimagined.",
+      "flavour": "Cola with a hint of vanilla",
+      "volume": "500 ml",
+      "year": 2024,
+      "story": "Nova Cola is the flagship item and represents the most complex item produced in this project. I put it in a glass bottle rather than a can because the carbonation lasts longer, and the glass also let me write a custom GLSL shader for the transparent glass using a dual mesh object model to define the bottle and the liquid. You can switch to wireframe mode to see the bottle and liquid are in fact two separate three-dimensional meshes sitting inside each other.",
+      "shape": "bottle",
+      "colors": {
+        "primary": "#8a3b1f",
+        "secondary": "#3a1708",
+        "accent": "#ffd24d"
+      }
+    }
+  ]
+}
